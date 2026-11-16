@@ -40,9 +40,20 @@ export const CreateAccount = async (req: Request, res: Response) => {
 };
 
 export const Accounts = async (req: Request, res: Response) => {
+  const { limit: PageLimit, offset: PageOffset } = req.query;
+
   try {
+    if (Number(PageLimit) < 0 || Number(PageOffset) < 0) {
+      return res.status(400).json({
+        message: `${Number(PageLimit) < 0 ? "Limit not to be zero" : Number(PageOffset) < 0 ? "Offset not to be zero" : "Limit & Offset both not to be zero"}`,
+      });
+    }
     const usersResponse = await sql`
-    SELECT * FROM accounts`;
+    SELECT * FROM accounts
+    ORDER BY account_holder_name ASC
+    LIMIT ${Number(PageLimit || 5)}
+    OFFSET ${Number(PageOffset || 0)}`;
+
     if (usersResponse.count > 0) {
       return res.status(200).json({
         message: "Success",
