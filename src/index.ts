@@ -1,11 +1,11 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import routers from "./routes/routes.ts";
-
-dotenv.config();
+import bodyParser from "body-parser";
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+app.use(bodyParser.json());
 
 app.use(routers);
 
